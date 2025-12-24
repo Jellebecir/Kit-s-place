@@ -1,0 +1,52 @@
+#!/bin/bash
+
+PROFILE=""
+
+while getopts "p:" opt; do
+  case $opt in
+    p) PROFILE=$OPTARG ;;
+    *) echo "Usage: kp -p <profile>"; exit 1 ;;
+  esac
+done
+
+if [[ -z "$PROFILE" ]]; then
+  echo "Please provide a profile: f, b, a"
+  exit 1
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+
+run_backend_local() {
+  echo "Starting backend dev server locally..."
+  cd "$SCRIPT_DIR/backend"
+  npm install
+  npm run dev
+}
+
+run_frontend_local() {
+  echo "Starting frontend dev server locally..."
+  cd "$SCRIPT_DIR/frontend"
+  npm install
+  npm run dev
+}
+
+case "$PROFILE" in
+  f)
+    echo "Profile: Frontend local, backend + DB Docker"
+    docker compose -f "$SCRIPT_DIR/infra/docker/docker-compose.yaml" up -d backend db
+    run_frontend_local
+    ;;
+  b)
+    echo "Profile: Backend local, frontend + DB Docker"
+    docker compose -f "$SCRIPT_DIR/infra/docker/docker-compose.yaml" up --build -d frontend db
+    run_backend_local
+    ;;
+  a)
+    echo "Profile: All services in Docker (production mode)"
+    docker compose -f "$SCRIPT_DIR/infra/docker/docker-compose.yaml" up --build
+    ;;
+  *)
+    echo "Unknown profile. Use f, b, or a."
+    exit 1
+    ;;
+esac
