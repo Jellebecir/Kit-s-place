@@ -1,10 +1,16 @@
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
 import './App.css'
-import '@indoui/react-text-editor/styles.css';
+import './index.css'
+import './assets/colors.css'
+import './assets/theme.css'
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <div className="app">
+      <RouterProvider router={router} />
+    </div>
+  );
 }
 
-export default App
+export default App;
