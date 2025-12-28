@@ -13,6 +13,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@blogs/*": ["./src/features/blogs/*"],
+      "@pages/*": ["./src/pages/*"],
       "@kp-types/*": ["./src/types/*"]
     },
 
